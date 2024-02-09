@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 4000",
     "build": "next build",
-    "build-no-lint": "eslint --ignore-pattern build/ --no-error-on-unmatched-pattern && next build" // Este comando ignora los archivos en la carpeta build/ durante la ejecución de ESLint y luego ejecuta el proceso de construcción
+    "build-no-lint": "eslint --ignore-pattern build/ --no-error-on-unmatched-pattern && next build",
     "start": "next start",
     "lint": "next lint"
   },
