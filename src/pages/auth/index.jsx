@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
 import { Button, TextField, Typography, Grid, Paper, Link } from '@mui/material';
 import { useRouter } from 'next/router';
+import Navbar from '@/components/navbar';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -10,12 +11,22 @@ const LoginForm = () => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const router = useRouter();
 
+    // useEffect para obtener y establecer los valores de los campos desde la URL
+    useEffect(() => {
+      const { email: urlEmail, password: urlPassword } = router.query;
+      if (urlEmail) {
+        setEmail(urlEmail);
+      }
+      if (urlPassword) {
+        setPassword(urlPassword);
+      }
+    }, [router.query]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', { email, password });
-      localStorage.setItem('token', response.data.access_token); // Cambia response.data.token a response.data.access_token
-      console.log(localStorage.getItem('token'));
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { email, password }); // Utiliza la URL de la API definida en la variable de entorno
+      localStorage.setItem('token', response.data.access_token);
       router.push('/');
       setLoginSuccess(true);
       setLoginError('');
@@ -24,9 +35,10 @@ const LoginForm = () => {
       setLoginSuccess(false);
     }
   };
-
   return (
-    <Paper variant="outlined" sx={{ p: 4 }}>
+    <>
+    <Navbar></Navbar>
+    <Paper variant="outlined" sx={{ p: 4, m:8  }}>
       <Typography variant="h5" align="center" gutterBottom>
         Iniciar Sesión
       </Typography>
@@ -67,7 +79,7 @@ const LoginForm = () => {
           Regístrate
         </Link>
       </Typography>
-    </Paper>
+    </Paper></>
   );
 };
 

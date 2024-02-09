@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { Table, TableBody, TableContainer, TableHead, TableRow, Button, Paper, Typography, Dialog, 
-  DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import {
+  Table, TableBody, TableContainer, TableHead, TableRow, Button, Paper, Typography, Dialog,
+  DialogTitle, DialogContent, DialogActions, TextField
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Navbar from '@/components/navbar';
@@ -16,6 +18,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 14,
   },
 }));
+// Define la URL de la API utilizando la variable de entorno
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -24,6 +28,7 @@ const ProductsPage = () => {
   const [editProductName, setEditProductName] = useState('');
   const [editProductDescription, setEditProductDescription] = useState('');
   const [editProductPrice, setEditProductPrice] = useState('');
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,7 +40,7 @@ const ProductsPage = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:3000/products', {
+        const response = await axios.get(`${API_URL}/products`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -69,10 +74,10 @@ const ProductsPage = () => {
         // O mostrar un mensaje de error
         return;
       }
-  
+
       if (editProductId) {
         // Editar producto existente
-        await axios.put(`http://localhost:3000/products/${editProductId}`, {
+        await axios.put(`${API_URL}/products/${editProductId}`, {
           name: editProductName,
           description: editProductDescription,
           price: editProductPrice,
@@ -83,7 +88,7 @@ const ProductsPage = () => {
         });
       } else {
         // Crear nuevo producto
-        await axios.post(`http://localhost:3000/products`, {
+        await axios.post(`${API_URL}/products`, {
           name: editProductName,
           description: editProductDescription,
           price: editProductPrice,
@@ -94,7 +99,7 @@ const ProductsPage = () => {
         });
       }
       // Actualizar la lista de productos
-      const response = await axios.get('http://localhost:3000/products', {
+      const response = await axios.get(`${API_URL}/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -105,7 +110,7 @@ const ProductsPage = () => {
       console.error('Error saving product:', error);
     }
   };
-  
+
   const handleDelete = async (productId) => {
     try {
       const token = localStorage.getItem('token');
@@ -114,15 +119,15 @@ const ProductsPage = () => {
         // O mostrar un mensaje de error
         return;
       }
-      console.log(token)
-      await axios.delete(`http://localhost:3000/products/${productId}`, {
+
+      await axios.delete(`${API_URL}/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       // Actualizar la lista de productos después de eliminar
-      const response = await axios.get('http://localhost:3000/products', {
+      const response = await axios.get(`${API_URL}/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,87 +140,94 @@ const ProductsPage = () => {
 
   return (
     <NoSsr>
-    <div>
-    <Navbar></Navbar>
-    <Grid container spacing={2} sx={{marginRight:"2em"}}>
-      <Grid item xs={12}>
-        <Typography variant="h4" align="center" gutterBottom >
-          Lista de Productos
-        </Typography>
-      </Grid>
-      <Grid item xs={12} sx={{ margin: '0 auto', maxWidth: 800 }}>
-        <Button onClick={() => handleDialogOpen()} variant="contained" color="primary" sx={{ marginBottom: 2 }}>
-          Nuevo Producto
-        </Button>
-        <TableContainer component={Paper} sx={{ margin: '20px auto' }}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>ID</StyledTableCell>
-                <StyledTableCell>Nombre</StyledTableCell>
-                <StyledTableCell>Descripción</StyledTableCell>
-                <StyledTableCell>Precio</StyledTableCell>
-                <StyledTableCell>Eliminado</StyledTableCell>
-                <StyledTableCell>Acciones</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.description}</TableCell>
-                  <TableCell>{row.price}</TableCell>
-                  <TableCell>{row.deleted ? 'Sí' : 'No'}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleDialogOpen(row.id, row.name, row.description, row.price)} variant="contained" color="primary" sx={{ marginRight: 1 }}>
-                      Editar
-                    </Button>
-                    <Button onClick={() => handleDelete(row.id)} variant="contained" color="error">
-                      Eliminar
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-      <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>{editProductId ? 'Editar Producto' : 'Nuevo Producto'}</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="normal"
-            label="Nombre"
-            fullWidth
-            value={editProductName}
-            onChange={(e) => setEditProductName(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            label="Descripción"
-            fullWidth
-            value={editProductDescription}
-            onChange={(e) => setEditProductDescription(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            label="Precio"
-            fullWidth
-            value={editProductPrice}
-            onChange={(e) => setEditProductPrice(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleEdit} color="primary">
-            Guardar
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Grid></div></NoSsr>
+      <div>
+        <Navbar></Navbar>
+        <Grid container spacing={2} sx={{ marginRight: "2em" }}>
+          <Grid item xs={12}>
+            <Typography variant="h4" align="center" gutterBottom >
+              Lista de Productos
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sx={{ margin: '0 auto', maxWidth: 800 }}>
+            
+              <Button
+                onClick={() => handleDialogOpen()}
+                variant="contained"
+                color="primary"
+                sx={{ marginBottom: 2 }}
+              >
+                Nuevo Producto
+              </Button>
+            
+            <TableContainer component={Paper} sx={{ margin: '20px auto' }}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>ID</StyledTableCell>
+                    <StyledTableCell>Nombre</StyledTableCell>
+                    <StyledTableCell>Descripción</StyledTableCell>
+                    <StyledTableCell>Precio</StyledTableCell>
+                    <StyledTableCell>Eliminado</StyledTableCell>
+                    <StyledTableCell>Acciones</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {products.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell>{row.id}</TableCell>
+                      <TableCell>{row.name}</TableCell>
+                      <TableCell>{row.description}</TableCell>
+                      <TableCell>{row.price}</TableCell>
+                      <TableCell>{row.deleted ? 'Sí' : 'No'}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleDialogOpen(row.id, row.name, row.description, row.price)} variant="contained" color="primary" sx={{ marginRight: 1 }}>
+                          Editar
+                        </Button>
+                        <Button onClick={() => handleDelete(row.id)} variant="contained" color="error">
+                          Eliminar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+          <Dialog open={openDialog} onClose={handleDialogClose}>
+            <DialogTitle>{editProductId ? 'Editar Producto' : 'Nuevo Producto'}</DialogTitle>
+            <DialogContent>
+              <TextField
+                margin="normal"
+                label="Nombre"
+                fullWidth
+                value={editProductName}
+                onChange={(e) => setEditProductName(e.target.value)}
+              />
+              <TextField
+                margin="normal"
+                label="Descripción"
+                fullWidth
+                value={editProductDescription}
+                onChange={(e) => setEditProductDescription(e.target.value)}
+              />
+              <TextField
+                margin="normal"
+                label="Precio"
+                fullWidth
+                value={editProductPrice}
+                onChange={(e) => setEditProductPrice(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDialogClose} color="primary">
+                Cancelar
+              </Button>
+              <Button onClick={handleEdit} color="primary">
+                Guardar
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Grid></div></NoSsr>
   );
 };
 
