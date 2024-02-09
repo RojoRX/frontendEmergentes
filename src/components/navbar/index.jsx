@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+
 const Navbar = () => {
   const router = useRouter();
   const [token, setToken] = useState('');

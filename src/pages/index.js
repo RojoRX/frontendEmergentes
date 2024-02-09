@@ -1,10 +1,12 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import Link from "next/link";
-import Navbar from "@/components/navbar";
-const inter = Inter({ subsets: ["latin"] });
-
+// pages/index.js
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import SolidTemplate from '@/components/SolidTemplate';
+import DetailsComponent from '@/components/details';
+import OtherDetailsComponent from '@/components/otherDetails';
+import CardsComponent from '@/components/cards/cards';
+import FooterComponent from '@/components/footer';
 export default function Home() {
   return (
     <>
@@ -14,16 +16,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        <h1>Inicio</h1>
-        <Link href="/contact">
-        Contact
-      </Link>
-      <Link href="/products">
-        Products
-      </Link>
-      </div>
+      <SolidTemplate />
+      <DetailsComponent/>
+      <OtherDetailsComponent/>
+      <CardsComponent/>
+    <FooterComponent/>
     </>
   );
 }
-
